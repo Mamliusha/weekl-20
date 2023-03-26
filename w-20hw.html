@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Starwars</title>
+</head>
+<body>
+    <div>
+        <label for="entity">Select an entity:</label>
+        <select id="entity">
+            <option value="films">Films</option>
+            <option value="people">People</option>
+            <option value="planets">Planets</option>
+            <option value="species">Species</option>
+            <option value="starships">Starships</option>
+            <option value="vehicles">Vehicles</option>
+        </select>
+    </div>
+    <div>
+        <label for="entity-id">Enter an entity ID:</label>
+        <input type="number" id="entity-id" min="1" max="10">
+    </div>
+    <div>
+        <button id="submit-btn">Submit</button>
+    </div>
+    <div id="result"></div>
+    <div id="error"></div>
+
+    <script>
+        const submitBtn = document.getElementById('submit-btn');
+        const resultDiv = document.getElementById('result');
+        const errorDiv = document.getElementById('error');
+
+        submitBtn.addEventListener('click', () => {
+            const entity = document.getElementById('entity').value;
+            const entityId = document.getElementById('entity-id').value;
+            const url = `https://swapi.dev/api/${entity}/${entityId}/`;
+
+            resultDiv.textContent = 'Loading...';
+            errorDiv.textContent = '';
+
+            fetch(url)
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    return Promise.reject(new Error(`Error ${response.status}: ${response.statusText}`));
+                })
+                .then(data => {
+                    resultDiv.textContent = `Name: ${data.name}`;
+                })
+                .catch(error => {
+                    resultDiv.textContent = 'error';
+                    errorDiv.textContent = error.message;
+                })
+                .finally(() => {
+                    document.getElementById('entity-id').value = '';
+                });
+        });
+    </script>
+</body>
+</html>
